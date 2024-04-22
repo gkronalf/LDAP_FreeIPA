@@ -1,0 +1,10 @@
+---
+
+- name: LDAP on base FreeIPA
+  hosts: all
+  become: true
+
+  tasks:
+  - name: Install FreeIPA
+    yum:
+      name: freeipa
