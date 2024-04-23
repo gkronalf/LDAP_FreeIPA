@@ -1,0 +1,72 @@
+---
+
+- name: Settings VM
+  hosts: all
+  become: true
+
+  tasks:
+  - name: Set timezone Moscow
+    community.general.timezone:
+      name: Europe/Moscow
+
+  - name: start chronyd
+    service: 
+      name: chronyd
+      state: restarted
+      enabled: true
+
+  - name: Setting Local DNS in file /etc/hosts
+    template:
+      src: templates/hosts.j2
+      dest: /etc/hosts
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: disable ufw service
+    service:
+      name: firewalld
+      state: stopped
+      enabled: false
+
+  - name: Disable SELinux
+    selinux:
+      state: disabled
+
+  # - name: Reboot if required
+  #   reboot:
+  #     reboot_timeout: 10
+  #   when: reboot_required
+
+- name: LDAP on base FreeIPA on server
+  hosts: servers
+  become: true
+
+  tasks:
+  - name: Install epel-release
+    yum:
+      name: epel-release
+      state: present
+      update_cache: yes
+      
+  - name: Install FreeIPA
+    yum:
+      name: ipa-server
+      state: present
+      update_cache: yes
+
+- name: Settings clients FreeIPA
+  hosts: clients
+  become: true
+
+  tasks:
+  - name: install module ipa-client
+    yum:
+      name:
+        - freeipa-client
+      state: present
+      update_cache: true
+  
+  #Запуск скрипта добавления хоста к серверу
+  - name: add host to ipa-client-install
+    shell: sudo echo -e "yes\nyes" | ipa-client-install --mkhomedir --domain=OTUS.LAN --server=ipa.otus.lan --no-ntp -p admin -w Otus2024

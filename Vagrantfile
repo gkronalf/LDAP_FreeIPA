@@ -1,7 +1,13 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+# OS = "bento/centos-8.4"
+OS = "centos/7"
+
 Vagrant.configure("2") do |config|
    # Указываем ОС, версию, количество ядер и ОЗУ
-   config.vm.box = "centos/stream8"
-   config.vm.box_version = "20210210.0"
+   config.vm.box = OS
+   #config.vm.box_version = "20210210.0"
 
    config.vm.provider :virtualbox do |v|
      v.memory = 2048
