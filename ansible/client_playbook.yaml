@@ -1,0 +1,11 @@
+---
+
+- name: Settings clients FreeIPA
+  hosts: clients
+  become: true
+
+  tasks:
+  
+  #Запуск скрипта добавления хоста к серверу
+  - name: add host to ipa-client-install
+    shell: sudo echo -e "yes\nyes" | ipa-client-install --mkhomedir --domain=OTUS.LAN --server=ipa.otus.lan --no-ntp -p admin -w Otus2024
